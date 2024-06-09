@@ -5,6 +5,9 @@ import org.jnetpcap.PcapIf;
 import org.jnetpcap.packet.JPacket;
 import org.jnetpcap.packet.JPacketHandler;
 import org.jnetpcap.packet.Payload;
+import org.pcap4j.core.PcapNativeException;
+import org.pcap4j.core.PcapNetworkInterface;
+import org.pcap4j.core.Pcaps;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
@@ -16,35 +19,28 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RTPCaptureSavePayload {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws PcapNativeException {
         // List all available network interfaces
-        List<PcapIf> allDevs = new ArrayList<>();
-        StringBuilder errbuf = new StringBuilder();
-        int result = Pcap.findAllDevs(allDevs, errbuf);
-
-        if (result != Pcap.OK) {
-            System.err.printf("Error occurred: %s%n", errbuf.toString());
+        List<PcapNetworkInterface> allDevs = Pcaps.findAllDevs();
+        if (allDevs == null || allDevs.isEmpty()) {
+            System.out.println("No network interfaces found.");
             return;
         }
 
-        // Prompt user to select a network interface
         System.out.println("Available Network Interfaces:");
-        int index = 0;
-        for (PcapIf dev : allDevs) {
-            System.out.println(index++ + ": " + dev.getName() + " : " + dev.getDescription());
+        for (int i = 0; i < allDevs.size(); i++) {
+            System.out.println(i + ": " + allDevs.get(i).getName() + " [" + allDevs.get(i).getDescription() + "]");
         }
 
+        // Select a network interface
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the index of the network interface to capture from: ");
-        int selectedIndex = scanner.nextInt();
+        System.out.print("Select a network interface (index): ");
+        int index = scanner.nextInt();
 
-        if (selectedIndex < 0 || selectedIndex >= allDevs.size()) {
-            System.err.println("Invalid interface index.");
-            return;
-        }
+        PcapNetworkInterface nif = allDevs.get(index);
 
         // Get the selected network interface name
-        String interfaceName = allDevs.get(selectedIndex).getName();
+        String interfaceName = nif.getName();
 
         // Open the selected network interface for packet capture
         StringBuilder errbuf2 = new StringBuilder();

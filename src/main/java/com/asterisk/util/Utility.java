@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Utility {
 
-    private static PcapNetworkInterface selectNetworkInterface() throws PcapNativeException {
+    public static PcapNetworkInterface selectNetworkInterface() throws PcapNativeException {
         List<PcapNetworkInterface> interfaces = Pcaps.findAllDevs();
         for (PcapNetworkInterface iface : interfaces) {
             if (iface.getAddresses().stream().anyMatch(address -> address.getAddress() instanceof java.net.Inet4Address)) {

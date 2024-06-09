@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AsteriskRtpCaptureWorkingFile {
 
-    private static final String ASTERISK_IP = "192.168.0.132";
+    private static final String ASTERISK_IP = "192.168.244.128";
     private static final String AMI_USERNAME = "mediaoffice";
     private static final String AMI_PASSWORD = "mediaoffice";
 
